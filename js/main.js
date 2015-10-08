@@ -1,8 +1,15 @@
-function(window, d3) {
+(function(window, d3) {
 	
 	var margin = {top: 20, right: 20, bottom: 30, left: 40},
 	    width = 960 - margin.left - margin.right,
 	    height = 500 - margin.top - margin.bottom;
+
+	// var artWidthRe = new RegExp('\((.*?) x'),
+	// 	artHeightRe = new RegExp('x (.*?) cm');
+
+	var artWidthRe = /(.*?) x/,
+		artHeightRe = /x (.*?) cm/,
+		metricRe = /\((.*?)\)/;
 
 	/* 
 	 * value accessor - returns the value to encode for a given data object.
@@ -40,13 +47,25 @@ function(window, d3) {
 	    .style("opacity", 0);
 
 	// load data
-	d3.csv("cereal.csv", function(error, data) {
+
+	var artDimensions = '';
+	d3.csv("resources/Artworks-sample.csv", function(error, data) {
+
+
 
 	  // change string (from CSV) into number format
 	  data.forEach(function(d) {
-	    d.Calories = +d.Calories;
-	    d["Protein (g)"] = +d["Protein (g)"];
-	//    console.log(d);
+	  	artDimensions = d.Dimensions;
+	  	artDimensions = metricRe.exec(artDimensions)[1];
+	  	d = {};
+	  	d.width = artWidthRe.exec(artDimensions)[1];
+	  	d.height = artHeightRe.exec(artDimensions)[1];
+
+
+
+	    // d.Calories = +d.Calories;
+	    // d["Protein (g)"] = +d["Protein (g)"];
+	   console.log(d);
 	  });
 
 	  // don't want dots overlapping axis, so add in buffer to data domain
@@ -127,5 +146,5 @@ function(window, d3) {
 
 
 
-	
-}(window, d3);
+
+})(window, d3);
