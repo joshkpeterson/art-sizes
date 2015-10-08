@@ -19,13 +19,13 @@
 	 */ 
 
 	// setup x 
-	var xValue = function(d) { return d.Calories;}, // data -> value
+	var xValue = function(d) { return d.width;}, // data -> value
 	    xScale = d3.scale.linear().range([0, width]), // value -> display
 	    xMap = function(d) { return xScale(xValue(d));}, // data -> display
 	    xAxis = d3.svg.axis().scale(xScale).orient("bottom");
 
 	// setup y
-	var yValue = function(d) { return d["Protein (g)"];}, // data -> value
+	var yValue = function(d) { return d.height;}, // data -> value
 	    yScale = d3.scale.linear().range([height, 0]), // value -> display
 	    yMap = function(d) { return yScale(yValue(d));}, // data -> display
 	    yAxis = d3.svg.axis().scale(yScale).orient("left");
@@ -48,6 +48,11 @@
 
 	// load data
 
+	function type(d) {
+	  return parseInt(d); 	  // coerce to int
+
+	}
+
 	var artDimensions = '';
 	d3.csv("resources/Artworks-sample.csv", function(error, data) {
 
@@ -58,8 +63,8 @@
 	  	artDimensions = d.Dimensions;
 	  	artDimensions = metricRe.exec(artDimensions)[1];
 	  	d = {};
-	  	d.width = artWidthRe.exec(artDimensions)[1];
-	  	d.height = artHeightRe.exec(artDimensions)[1];
+	  	d.width = type(artWidthRe.exec(artDimensions)[1]);
+	  	d.height = type(artHeightRe.exec(artDimensions)[1]);
 
 
 
