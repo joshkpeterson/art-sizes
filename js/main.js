@@ -7,8 +7,8 @@
 	// var artWidthRe = new RegExp('\((.*?) x'),
 	// 	artHeightRe = new RegExp('x (.*?) cm');
 
-	var artWidthRe = /(.*?) x/,
-		artHeightRe = /x (.*?) cm/,
+	var artWidthRe = new RegExp('(.*?) x', 'i'),
+		artHeightRe = new RegExp('x (.*?) cm', 'i'),
 		metricRe = /\((.*?)\)/;
 
 	/* 
@@ -54,24 +54,35 @@
 	}
 
 	var artDimensions = '';
-	d3.csv("resources/Artworks-sample.csv", function(error, data) {
+	d3.csv("resources/Artworks.csv", function(error, data) {
 
 
 
 	  // change string (from CSV) into number format
-	  data.forEach(function(d) {
-	  	artDimensions = d.Dimensions;
-	  	artDimensions = metricRe.exec(artDimensions)[1];
-	  	d = {};
-	  	d.width = type(artWidthRe.exec(artDimensions)[1]);
-	  	d.height = type(artHeightRe.exec(artDimensions)[1]);
+  		data.forEach(function(d, index, array) {
+			artDimensions = d.Dimensions;
+
+			if (artDimensions) {
+				artDimensions = metricRe.exec(artDimensions);
+				artDimensions = (artDimensions !== null && typeof artDimensions !== typeof undefined) ? artDimensions[1] : "0 x 0 cm";
+
+				d = {};
+				// console.log(artDimensions);
+				// d.width = type(artWidthRe.exec(artDimensions)[1]);
+				d.width = artWidthRe.exec(artDimensions);
+				d.width = (d.width !== null && typeof d.width !== typeof undefined) ? d.width[1] : "0";
+				d.height = artHeightRe.exec(artDimensions);
+				d.height = (d.height !== null && typeof d.height !== typeof undefined) ? d.height[1] : "0";
+
+				d.height = type(d.height);
+				d.width = type(d.width);
+
+				array[index] = d;	
+			}
 
 
-
-	    // d.Calories = +d.Calories;
-	    // d["Protein (g)"] = +d["Protein (g)"];
-	   console.log(d);
-	  });
+			// console.log(d);
+		});
 
 	  // don't want dots overlapping axis, so add in buffer to data domain
 	  xScale.domain([d3.min(data, xValue)-1, d3.max(data, xValue)+1]);
