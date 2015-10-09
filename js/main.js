@@ -117,7 +117,7 @@
 	      .data(data)
 	    .enter().append("circle")
 	      .attr("class", "dot")
-	      .attr("r", 3.5)
+	      .attr("r", 1)
 	      .attr("cx", xMap)
 	      .attr("cy", yMap)
 	      .style("fill", function(d) { return color(cValue(d));}) 
